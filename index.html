@@ -4,7 +4,27 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <script src="./my-select.js" defer></script>
   </head>
-  <body></body>
+  <body>
+    <script>
+      const onLoad = (evt) => {
+        components.forEach((component) => {
+          const customEl = document.createElement(component);
+          document.body.append(customEl);
+        });
+      };
+
+      const onError = (err) => {};
+
+      const components = ["my-select"];
+
+      components.forEach((component) => {
+        const script = document.createElement("script");
+        script.src = `./${component}.js`;
+        script.dataset.name = component;
+        script.addEventListener("load", onLoad);
+        document.body.append(script);
+      });
+    </script>
+  </body>
 </html>

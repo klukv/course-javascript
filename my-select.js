@@ -3,6 +3,12 @@ class MySelect extends HTMLElement {
     super();
     console.log("Hello World");
   }
+
+  connectedCallback() {
+    this.innerHTML = "<p>Это кастомный веб-компонент!</p>"
+  }
 }
 
-customElements.define("my-select", MySelect);
+const componentName = document.currentScript.dataset.name;
+
+customElements.define(componentName, MySelect);

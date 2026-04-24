@@ -2,7 +2,6 @@ class MySelect extends HTMLElement {
   #optionsBox;
   #templateOption;
   #convertedOptions;
-  #shadow;
   #selectPopup;
   #selectButton;
 
@@ -11,24 +10,11 @@ class MySelect extends HTMLElement {
   }
 
   connectedCallback() {
-    // this.#shadow = this.attachShadow({ mode: "open" });
+    this.attachShadow({ mode: "open" });
     this.#defineInitialOptions()
       .#createTemplateOption()
       .#renderSelect()
       .#removeInitialOptions();
-  }
-
-  #createTemplateOption() {
-    const template = document.createElement("template");
-
-    template.className = "option-template";
-    template.innerHTML = `<label class="option"><input type="checkbox"/></label>`;
-
-    this.append(template);
-
-    this.#templateOption = this.querySelector(".option-template");
-
-    return this;
   }
 
   #defineInitialOptions() {
@@ -42,35 +28,84 @@ class MySelect extends HTMLElement {
     return this;
   }
 
+  #createTemplateOption() {
+    const template = document.createElement("template");
+
+    template.className = "option-template";
+    template.innerHTML = `<label class="option"><input type="checkbox"/></label>`;
+
+    this.shadowRoot.append(template);
+
+    this.#templateOption = this.shadowRoot.querySelector(".option-template");
+
+    return this;
+  }
+
   #renderSelect() {
-    this.innerHTML = `
+    this.shadowRoot.innerHTML = `
      <style>
-        my-select {
+        :host {
           position: relative;
           display: inline-block;
         }
+
         .select-popup {
           display: none;
           position: absolute;
-          top: 100%;
+          top: 130%;
           left: 0;
+          min-width: 181px;
+          transform-origin: center top;
+          color: var(--q-input-panel-text, #000000);
+          background: var(--q-input-panel-bg, #ffffff);
+          border: 0 none;
+          border-radius: var(--q-border-radius-md, .375rem);
+          box-shadow: var(--q-box-shadow-popup, 0 4px 12px 0 rgba(72, 78, 81, .1));
         }
  
         .select-popup.open {
           display: block;
         }
+
+        .search-field {
+          display: inline-block;
+          background: var(--q-input-bg, #ffffff);
+          color: var(--q-input-text, #0c2d4a);
+          border: 1px solid var(--q-input-border, #e6e6e6);
+          border-radius: var(--q-input-border-radius, .375rem);
+          box-shadow: var(--q-input-shadow, inset 3px 3px 5px #d2d5d7, inset -1px -1px 5px #ffffff);
+          outline: none;
+          font-family: inherit;
+          appearance: none;
+          transition: border-color .2s ease-out;
+          padding: 0;
+          margin: 0;
+          text-overflow: ellipsis;
+          font-size: var(--q-input-fs, .875rem);
+          line-height: var(--q-input-lh, 1.25rem);
+          padding: var(--q-input-padding, .5625rem .75rem);
+          height: -moz-fit-content;
+          height: fit-content;
+        }
+
+        .select-popup-options {
+          padding: 10px;
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+        }
     </style>
     <button class="select-button">Кнопка</button>
     <div class="select-popup">
-      <input id="search" placeholder="Search..." />
+      <input name="search" class="search-field" placeholder="Search..." />
       <div class="select-popup-options"></div>
     </div>
     `;
 
-    this.#optionsBox = this.querySelector(".select-popup-options");
-    this.#selectPopup = this.querySelector(".select-popup");
-    this.#selectButton = this.querySelector(".select-button");
-    
+    this.#optionsBox = this.shadowRoot.querySelector(".select-popup-options");
+    this.#selectPopup = this.shadowRoot.querySelector(".select-popup");
+    this.#selectButton = this.shadowRoot.querySelector(".select-button");
+
     this.#selectButton.addEventListener("click", this.#openPopup.bind(this));
 
     this.#renderOptions(this.#convertedOptions);

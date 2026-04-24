@@ -7,7 +7,6 @@ class MySelect extends HTMLElement {
 
   constructor() {
     super();
-    console.log("Hello World");
   }
 
   connectedCallback() {
@@ -21,7 +20,7 @@ class MySelect extends HTMLElement {
     wrapper.innerHTML = `
     <button class="select-button"></button>
     <div class="select-popup">
-      <input placeholder="Search..." />
+      <input id="search" placeholder="Search..." />
       <div class="select-popup-options"></div>
     </div>
     `;
@@ -30,32 +29,42 @@ class MySelect extends HTMLElement {
 
     const options = this.querySelectorAll("option");
 
-    
+    const convertedOptions = Array.from(options).reduce((acc, option) => {
+      acc.push({ [option.value]: option.textContent.trim() });
+      return acc;
+    }, []);
 
     this.#selectButton = this.querySelector(".select-button");
     this.#selectPopup = this.querySelector(".select-popup");
     this.#selectPopupSearch = this.querySelector(".select-popup-search");
     this.#optionsBox = this.querySelector(".select-popup-options");
+
+    this.#renderOptions(convertedOptions);
+
+    options.forEach(option => option.remove())
   }
 
   #createTemplateOption() {
     const template = document.createElement("template");
 
-    template.innerHTML = `<label class="option"><input type="checkbox"/><label>`;
-    this.append(template);
+    template.id = "option-template"
+    template.innerHTML = `<label class="option"><input type="checkbox"/></label>`;
 
-    this.#templateOption = this.querySelector("option");
+    document.body.append(template);
+
+    this.#templateOption = document.getElementById("option-template");
   }
 
   #renderOptions(options) {
     options.forEach((option) => {
-      const optionWrapper = this.#templateOption.content.cloneNode(true);
+      const optionTemplate = this.#templateOption.content.cloneNode(true);
+      const labelWrapper = optionTemplate.querySelector('.option');
 
       const optionEntries = Object.entries(option);
-      optionWrapper.dataset.value = optionEntries[0];
-      optionWrapper.textContent = optionEntries[1];
+      labelWrapper.dataset.value = optionEntries[0][0];
+      labelWrapper.append(optionEntries[0][1]);
 
-      this.#optionsBox.append(optionWrapper);
+      this.#optionsBox.append(labelWrapper)
     });
   }
 }

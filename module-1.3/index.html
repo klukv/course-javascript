@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <my-select>
+      <option value="opt1">Option 1</option>
+      <option value="opt2">Option 2</option>
+      <option value="opt3">Option 3</option>
+    </my-select>
+  </body>
+  <script>
+    const onLoad = (evt) => {};
+
+    const onError = (err) => {};
+
+    const components = ["my-select"];
+
+    components.forEach((component) => {
+      const script = document.createElement("script");
+      script.src = `./${component}.js`;
+      script.dataset.name = component;
+      script.addEventListener("load", onLoad);
+      document.body.append(script);
+    });
+  </script>
+</html>
